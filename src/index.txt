@@ -1,0 +1,21 @@
+p.acm.umn.edu
+=============
+
+API Guide
+---------
+
+POST /
+
+    Uploads the body of the request as a paste.
+	Returns the paste-id.
+
+GET /paste-id
+
+    Returns the content of a paste.
+
+Example Usage
+-------------
+
+    echo "This is my data!" | curl --data-binary @- https://p.acm.umn.edu/
+
+	curl https://p.acm.umn.edu/AGABrHBWxlg=
