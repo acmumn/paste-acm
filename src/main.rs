@@ -1,14 +1,15 @@
 extern crate base64;
 extern crate byteorder;
-extern crate diesel;
 extern crate failure;
 extern crate futures;
 extern crate iron;
 #[macro_use]
 extern crate log;
 extern crate logger;
+extern crate persistent;
 #[macro_use]
 extern crate router;
+extern crate rusqlite;
 extern crate stderrlog;
 #[macro_use]
 extern crate structopt;
@@ -18,16 +19,23 @@ mod handlers;
 mod options;
 mod snowflake;
 
+use std::env::set_var;
 use std::process::exit;
+use std::sync::Mutex;
 
 use failure::Error;
 use iron::prelude::*;
+use iron::typemap::Key;
 use logger::Logger;
+use persistent::Read;
+use rusqlite::Connection;
 use structopt::StructOpt;
 
 use options::Options;
 
 fn main() {
+    set_var("RUST_BACKTRACE", "1");
+
     let options = Options::from_args();
     stderrlog::new()
         .quiet(options.quiet)
@@ -42,13 +50,54 @@ fn main() {
 }
 
 fn run(options: Options) -> Result<(), Error> {
+    let mut db = Connection::open(options.database)?;
+    create_table(&mut db)?;
+
     let mut chain = Chain::new(router! {
         index:    get  "/"    => handlers::index,
         upload:   post "/"    => handlers::upload,
         download: get  "/:id" => handlers::download,
     });
     chain.link(Logger::new(None));
+    chain.link(Read::<DB>::both(Mutex::new(db)));
 
     Iron::new(chain).http((options.addr, options.port))?;
     Ok(())
+}
+
+fn create_table(conn: &mut Connection) -> Result<(), Error> {
+    let db = conn.transaction()?;
+
+    // Check if the table exists.
+    {
+        let mut does_table_exist = db.prepare(
+            "SELECT name
+                FROM sqlite_master
+                WHERE type = 'table' AND name = 'paste-acm'",
+        )?;
+        let exists = does_table_exist.exists(&[])?;
+        does_table_exist.finalize()?;
+        if exists {
+            return Ok(());
+        }
+    }
+
+    // Create the table if it doesn't exist.
+    db.execute(
+        "CREATE TABLE 'paste-acm' (
+             id   INTEGER PRIMARY KEY,
+             data TEXT NOT NULL
+         )",
+        &[],
+    )?;
+
+    db.commit()?;
+    Ok(())
+}
+
+/// A key for the database connection.
+enum DB {}
+
+impl Key for DB {
+    type Value = Mutex<Connection>;
 }

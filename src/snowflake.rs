@@ -3,6 +3,8 @@
 
 use std::cell::RefCell;
 
+use base64::{DecodeError, URL_SAFE};
+
 thread_local! {
     static INCREMENT: RefCell<u64> = RefCell::new(0);
     static THREAD_ID: u64 = {
@@ -39,11 +41,28 @@ pub fn snowflake() -> u64 {
 }
 
 /// Generates a snowflake as a base64 string.
-pub fn snowflake_b64() -> String {
-    use base64::{encode_config, URL_SAFE};
-    use byteorder::{ByteOrder, LittleEndian};
+pub fn snowflake_b64() -> (u64, String) {
+    use base64::encode_config;
+    use byteorder::{BigEndian, ByteOrder};
+
+    let n = snowflake();
 
     let mut buf = [0u8; 8];
-    LittleEndian::write_u64(&mut buf, snowflake());
-    encode_config(&buf, URL_SAFE)
+    BigEndian::write_u64(&mut buf, n);
+    let s = encode_config(&buf, URL_SAFE);
+
+    (n, s)
+}
+
+/// Decodes a snowflake from a string, which is interpreterd as base64.
+pub fn decode_snowflake(s: &str) -> Result<u64, DecodeError> {
+    use base64::decode_config;
+    use byteorder::{BigEndian, ByteOrder};
+
+    let bs = decode_config(s, URL_SAFE)?;
+    if bs.len() == 8 {
+        Ok(BigEndian::read_u64(&bs))
+    } else {
+        Err(DecodeError::InvalidLength)
+    }
 }

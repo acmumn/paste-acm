@@ -1,4 +1,5 @@
 use std::net::IpAddr;
+use std::path::PathBuf;
 
 #[derive(Debug, StructOpt)]
 #[structopt(raw(global_setting = "::structopt::clap::AppSettings::ColoredHelp"))]
@@ -8,8 +9,9 @@ pub struct Options {
     pub addr: IpAddr,
 
     /// The database file.
-    #[structopt(short = "d", long = "db", default_value = "paste-acm.db")]
-    pub database: String,
+    #[structopt(short = "d", long = "db", default_value = "paste-acm.db",
+                parse(from_os_str))]
+    pub database: PathBuf,
 
     /// The port to serve on.
     #[structopt(short = "p", long = "port", default_value = "8080")]

@@ -7,7 +7,7 @@ API Guide
 POST /
 
     Uploads the body of the request as a paste.
-	Returns the paste-id.
+    Returns the paste-id.
 
 GET /paste-id
 
@@ -16,6 +16,6 @@ GET /paste-id
 Example Usage
 -------------
 
-    echo "This is my data!" | curl --data-binary @- https://p.acm.umn.edu/
+    echo "This is my data" | curl --data-binary @- https://p.acm.umn.edu/
 
-	curl https://p.acm.umn.edu/AGABrHBWxlg=
+    curl https://p.acm.umn.edu/AGABrHBWxlg=

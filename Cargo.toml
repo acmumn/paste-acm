@@ -7,13 +7,14 @@ authors = ["Nathan Ringo <remexre@gmail.com>"]
 [dependencies]
 base64 = "0.9.1"
 byteorder = "1.2.2"
-diesel = { version = "1.2.2", features = ["sqlite"] }
 failure = "0.1.1"
 futures = "0.2.0"
 iron = "0.6.0"
 log = "0.4.1"
 logger = "0.4.0"
+persistent = "0.4.0"
 router = "0.6.0"
+rusqlite = "0.13.0"
 stderrlog = "0.3.0"
 structopt = "0.2.7"
 tokio-core = "0.1.17"
