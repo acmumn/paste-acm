@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/acmumn/paste-acm.svg?branch=master)](https://travis-ci.org/acmumn/paste-acm)
 [![Dependency Status](https://deps.rs/repo/github/acmumn/paste-acm/status.svg)](https://deps.rs/repo/github/acmumn/paste-acm)
-[![Docker Status](https://img.shields.io/docker/build/jrottenberg/ffmpeg.svg)](https://hub.docker.com/r/acmumn/paste-acm)
+[![Docker Status](https://img.shields.io/docker/build/acmumn/paste-acm.svg)](https://hub.docker.com/r/acmumn/paste-acm)
 
 ## API Guide
 
