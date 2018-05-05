@@ -1,9 +1,26 @@
-# snackcoin
+# paste-acm
 
-[![Build Status](https://travis-ci.org/acmumn/snackcoin.svg?branch=master)](https://travis-ci.org/acmumn/snackcoin)
-[![Dependency Status](https://deps.rs/repo/github/acmumn/snackcoin/status.svg)](https://deps.rs/repo/github/acmumn/snackcoin)
+[![Build Status](https://travis-ci.org/acmumn/paste-acm.svg?branch=master)](https://travis-ci.org/acmumn/paste-acm)
+[![Dependency Status](https://deps.rs/repo/github/acmumn/paste-acm/status.svg)](https://deps.rs/repo/github/acmumn/paste-acm)
 
-ACM UMN SnackCoin -- The code is blockchain, the snacks aren't.
+## API Guide
+
+### POST /
+
+Uploads the body of the request as a paste.
+Returns the paste-id.
+
+### GET /paste-id
+
+Returns the content of a paste.
+
+## Example Usage
+
+```
+echo "This is my data" | curl --data-binary @- https://p.acm.umn.edu/
+
+curl https://p.acm.umn.edu/AGABrHBWxlg=
+```
 
 ## License
 

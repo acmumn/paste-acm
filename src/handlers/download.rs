@@ -3,6 +3,7 @@ use iron::prelude::*;
 use iron::status;
 use persistent::Read;
 use router::Router;
+use rusqlite::Error as RusqliteError;
 
 use DB;
 use snowflake::decode_snowflake;
@@ -20,11 +21,19 @@ pub fn handler(req: &mut Request) -> IronResult<Response> {
         &[&(id as i64)],
         |row| row.get("data"),
     );
+    drop(db);
+
     match res {
         Ok(body) => {
             let mime: Mime = "text/plain".parse().unwrap();
             Ok(Response::with((status::Ok, mime, body)))
         }
-        Err(err) => Err(IronError::new(err, status::InternalServerError)),
+        Err(err) => {
+            let status = match err {
+                RusqliteError::QueryReturnedNoRows => status::NotFound,
+                _ => status::InternalServerError,
+            };
+            Err(IronError::new(err, status))
+        }
     }
 }
