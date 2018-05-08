@@ -5,14 +5,16 @@ use iron::prelude::*;
 use iron::status;
 use persistent::Read;
 
-use DB;
+use {MaxFileSize, DB};
+use max_length::MaxLength;
 use snowflake::snowflake_b64;
 
 pub fn handler(req: &mut Request) -> IronResult<Response> {
+    let max_length = req.get::<Read<MaxFileSize>>().unwrap();
     let mut body = String::new();
-    req.body
+    MaxLength::new(&mut req.body, *max_length)
         .read_to_string(&mut body)
-        .map_err(|err| IronError::new(err, status::InternalServerError))?;
+        .map_err(|err| IronError::new(err, status::BadRequest))?;
     let (id_num, id_b64) = snowflake_b64();
 
     let mutex = req.get::<Read<DB>>().unwrap();

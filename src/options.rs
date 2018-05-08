@@ -13,6 +13,10 @@ pub struct Options {
                 parse(from_os_str))]
     pub database: PathBuf,
 
+    /// The maximum size of a file, in bytes.
+    #[structopt(short = "m", long = "max-size", default_value = "1000000")]
+    pub max_file_size: usize,
+
     /// The port to serve on.
     #[structopt(short = "p", long = "port", default_value = "8080")]
     pub port: u16,

@@ -16,6 +16,7 @@ extern crate structopt;
 extern crate tokio_core;
 
 mod handlers;
+mod max_length;
 mod options;
 mod snowflake;
 
@@ -60,6 +61,7 @@ fn run(options: Options) -> Result<(), Error> {
     });
     chain.link(Logger::new(None));
     chain.link(Read::<DB>::both(Mutex::new(db)));
+    chain.link(Read::<MaxFileSize>::both(options.max_file_size));
 
     Iron::new(chain).http((options.addr, options.port))?;
     Ok(())
@@ -100,4 +102,11 @@ enum DB {}
 
 impl Key for DB {
     type Value = Mutex<Connection>;
+}
+
+/// A key for the maximum file size.
+enum MaxFileSize {}
+
+impl Key for MaxFileSize {
+    type Value = usize;
 }
