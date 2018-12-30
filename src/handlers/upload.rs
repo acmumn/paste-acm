@@ -5,9 +5,9 @@ use iron::prelude::*;
 use iron::status;
 use persistent::Read;
 
-use {MaxFileSize, DB};
 use max_length::MaxLength;
 use snowflake::snowflake_b64;
+use {MaxFileSize, DB};
 
 pub fn handler(req: &mut Request) -> IronResult<Response> {
     let max_length = req.get::<Read<MaxFileSize>>().unwrap();
@@ -22,7 +22,8 @@ pub fn handler(req: &mut Request) -> IronResult<Response> {
     db.execute(
         "INSERT INTO 'paste-acm' (id, data) VALUES (?, ?)",
         &[&(id_num as i64), &body],
-    ).map_err(|err| IronError::new(err, status::InternalServerError))?;
+    )
+    .map_err(|err| IronError::new(err, status::InternalServerError))?;
     drop(db);
 
     let mime: Mime = "text/plain".parse().unwrap();

@@ -1,12 +1,13 @@
-use iron::mime::Mime;
+use iron::headers::ContentType;
+use iron::modifiers::Header;
 use iron::prelude::*;
 use iron::status;
 use persistent::Read;
 use router::Router;
 use rusqlite::Error as RusqliteError;
 
-use DB;
 use snowflake::decode_snowflake;
+use DB;
 
 pub fn handler(req: &mut Request) -> IronResult<Response> {
     let mutex = req.get::<Read<DB>>().unwrap();
@@ -25,8 +26,8 @@ pub fn handler(req: &mut Request) -> IronResult<Response> {
 
     match res {
         Ok(body) => {
-            let mime: Mime = "text/plain".parse().unwrap();
-            Ok(Response::with((status::Ok, mime, body)))
+            let ctype = ContentType::plaintext();
+            Ok(Response::with((status::Ok, Header(ctype), body)))
         }
         Err(err) => {
             let status = match err {

@@ -2,15 +2,21 @@ use std::net::IpAddr;
 use std::path::PathBuf;
 
 #[derive(Debug, StructOpt)]
-#[structopt(raw(global_setting = "::structopt::clap::AppSettings::ColoredHelp"))]
+#[structopt(raw(
+    global_setting = "::structopt::clap::AppSettings::ColoredHelp"
+))]
 pub struct Options {
     /// The address to serve on.
     #[structopt(short = "h", long = "host", default_value = "0.0.0.0")]
     pub addr: IpAddr,
 
     /// The database file.
-    #[structopt(short = "d", long = "db", default_value = "paste-acm.db",
-                parse(from_os_str))]
+    #[structopt(
+        short = "d",
+        long = "db",
+        default_value = "paste-acm.db",
+        parse(from_os_str)
+    )]
     pub database: PathBuf,
 
     /// The maximum size of a file, in bytes.
