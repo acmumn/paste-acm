@@ -28,6 +28,11 @@ pub fn handler(req: &mut Request) -> IronResult<Response> {
     drop(db);
 
     let mime: Mime = "text/plain".parse().unwrap();
-    let body = format!("https://p.acm.umn.edu/{}\n", id_b64);
+    let url = &req.url;
+    let port = match (url.scheme(), url.port()) {
+        ("http", 80) | ("https", 443) => String::new(),
+        (_, port) => format!(":{}", port),
+    };
+    let body = format!("{}://{}{}/{}\n", url.scheme(), url.host(), port, id_b64);
     Ok(Response::with((status::Ok, mime, body)))
 }
