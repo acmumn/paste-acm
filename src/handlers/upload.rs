@@ -19,9 +19,10 @@ pub fn handler(req: &mut Request) -> IronResult<Response> {
 
     let mutex = req.get::<Read<DB>>().unwrap();
     let db = mutex.lock().unwrap();
-    db.execute(
-        "INSERT INTO 'paste-acm' (id, data) VALUES (?, ?)",
-        &[&(id_num as i64), &body],
+
+    db.execute_named(
+        "INSERT INTO 'paste-acm' (id, data) VALUES (:id, :data)",
+        &[(":id", &(id_num as i64)), (":data", &body)],
     )
     .map_err(|err| IronError::new(err, status::InternalServerError))?;
     drop(db);

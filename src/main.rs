@@ -70,12 +70,13 @@ fn run(options: Options) -> Result<(), Error> {
 fn create_table(conn: &mut Connection) -> Result<(), Error> {
     let db = conn.transaction()?;
 
+    let p: [i32; 0] = [];
     db.execute(
         "CREATE TABLE IF NOT EXISTS 'paste-acm' (
              id   INTEGER PRIMARY KEY,
              data TEXT NOT NULL
          )",
-        &[],
+        &p,
     )?;
 
     db.commit()?;

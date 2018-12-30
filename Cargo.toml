@@ -5,7 +5,7 @@ version = "0.1.0"
 authors = ["Nathan Ringo <remexre@gmail.com>"]
 
 [dependencies]
-base64 = "0.9"
+base64 = "0.10"
 byteorder = "1.2"
 failure = "0.1"
 futures = "0.1"
@@ -14,7 +14,7 @@ log = "0.4"
 logger = "0.4"
 persistent = "0.4"
 router = "0.6"
-rusqlite = "0.13"
+rusqlite = "0.16"
 stderrlog = "0.4"
 structopt = "0.2"
 tokio-core = "0.1"
