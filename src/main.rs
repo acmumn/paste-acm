@@ -70,23 +70,8 @@ fn run(options: Options) -> Result<(), Error> {
 fn create_table(conn: &mut Connection) -> Result<(), Error> {
     let db = conn.transaction()?;
 
-    // Check if the table exists.
-    {
-        let mut does_table_exist = db.prepare(
-            "SELECT name
-                FROM sqlite_master
-                WHERE type = 'table' AND name = 'paste-acm'",
-        )?;
-        let exists = does_table_exist.exists(&[])?;
-        does_table_exist.finalize()?;
-        if exists {
-            return Ok(());
-        }
-    }
-
-    // Create the table if it doesn't exist.
     db.execute(
-        "CREATE TABLE 'paste-acm' (
+        "CREATE TABLE IF NOT EXISTS 'paste-acm' (
              id   INTEGER PRIMARY KEY,
              data TEXT NOT NULL
          )",
