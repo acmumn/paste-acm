@@ -1,8 +1,16 @@
-FROM rust:latest
+FROM rust:1.31
+RUN mkdir -p /home/rust/paste-acm
+WORKDIR /home/rust/paste-acm
+RUN USER=rust cargo init --bin .
 
-RUN mkdir /data
-WORKDIR /usr/src/paste-acm
-COPY . .
+COPY ./Cargo.lock ./Cargo.lock
+COPY ./Cargo.toml ./Cargo.toml
 
-RUN cargo install
-CMD ["paste-acm", "-d", "/data/paste-acm.db", "-vv"]
+RUN cargo build --release
+RUN rm -rf ./target/release/deps/paste_acm*
+RUN rm -rf ./src/*
+
+COPY ./src ./src
+RUN cargo build --release
+
+CMD ["/home/rust/paste-acm/target/release/paste-acm", "-vv"]
